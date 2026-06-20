@@ -1,0 +1,36 @@
+{
+  "id": "TASK-1",
+  "title": "Verify project prerequisites and access",
+  "category": "setup",
+  "description": "Verify that required database access, environment variables, dependencies, and Supabase credentials are available before starting the chunked transcription implementation.",
+  "acceptanceCriteria": [
+    "`.env.local` contains placeholders for required environment variables.",
+    "Real secret values are kept local and never written to repository files, task specs, logs, or chat.",
+    "Supabase configuration and database credentials are ready."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Read prerequisites from the PRD",
+      "details": "Open `.agent/prd/PRD.md` and review the `Prerequisites and Access` section.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Verify `.env.local` placeholder names",
+      "details": "Ensure `.env.local` exists and contains: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_BUCKET, SUPABASE_SECRET_KEY, and GEMINI_API_KEY.",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Verify Supabase connection",
+      "details": "Verify access to the Supabase database via the Supabase MCP server tools.",
+      "pass": false
+    }
+  ],
+  "dependencies": [],
+  "estimatedComplexity": "low",
+  "technicalNotes": [
+    "Do not commit actual API keys or passwords to GitHub. Use .env.local locally."
+  ]
+}

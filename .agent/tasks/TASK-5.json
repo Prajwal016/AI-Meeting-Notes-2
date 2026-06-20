@@ -1,0 +1,36 @@
+{
+  "id": "TASK-5",
+  "title": "Implement Supabase Realtime channel listener on the client",
+  "category": "functional",
+  "description": "Establish a real-time WebSocket channel listener on the dashboard and meeting detail pages using the Supabase client to receive `INSERT` updates for `transcript_chunks` table.",
+  "acceptanceCriteria": [
+    "Frontend listens to table `transcript_chunks` filtered by the current `meeting_id`.",
+    "Updates are received in real-time as they are written to the database.",
+    "Realtime subscription is cleaned up when the component unmounts."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Configure Supabase Realtime channel client listener",
+      "details": "Use `supabase.channel().on('postgres_changes', ...)` to listen for changes on `transcript_chunks` table.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Integrate listener hook in UI components",
+      "details": "Integrate the listener hook in `src/app/meetings/[id]/page.tsx` and ensure incoming chunks are appended to the local state.",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Ensure cleanup",
+      "details": "Return a unsubscribe function in `useEffect` hook to prevent resource leaks when leaving pages.",
+      "pass": false
+    }
+  ],
+  "dependencies": ["TASK-2"],
+  "estimatedComplexity": "medium",
+  "technicalNotes": [
+    "Make sure to filter subscription events by `meeting_id` to avoid receiving transcripts from other users' meetings."
+  ]
+}

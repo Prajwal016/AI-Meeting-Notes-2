@@ -1,0 +1,37 @@
+{
+  "id": "TASK-7",
+  "title": "Implement final insights generation and compilation",
+  "category": "functional",
+  "description": "After all chunks are transcribed, combine them sequentially, send the full transcript to Gemini to extract summary, decisions, action items, and risks, and update the meeting status to completed.",
+  "acceptanceCriteria": [
+    "Waits until all chunks have been successfully transcribed.",
+    "Concatenates transcripts into a single full transcript.",
+    "Calls Gemini model with full transcript to extract structured summary, decisions, action items, and risks.",
+    "Updates `public.meetings` status to `'completed'` and writes transcript/summary once inserts succeed."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Trigger insights generation on chunk completion",
+      "details": "Check if all chunks are processed in the API route. Gather all chunks from `transcript_chunks` ordered by `chunk_index`.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Call Gemini for final analysis",
+      "details": "Pass the combined text to `gemini.models.generateContent` with a structured schema to extract summary, decisions, action items, and risks.",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Update meeting status and insert lists",
+      "details": "Bulk insert the decisions, action items, and risks. Set the main meeting record `status` to `'completed'` and write the full transcript.",
+      "pass": false
+    }
+  ],
+  "dependencies": ["TASK-4"],
+  "estimatedComplexity": "medium",
+  "technicalNotes": [
+    "Run inserts and status update in a transaction or sequential steps, catching errors to set the meeting status to `'failed'` if anything fails."
+  ]
+}

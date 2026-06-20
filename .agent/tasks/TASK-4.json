@@ -1,0 +1,37 @@
+{
+  "id": "TASK-4",
+  "title": "Implement parallel transcription pipeline in API process route",
+  "category": "api-endpoint",
+  "description": "Modify the background processing route to split the downloaded file, process chunks through the Gemini Files API, poll for ACTIVE states, transcribe each chunk, and write segments to `transcript_chunks` table.",
+  "acceptanceCriteria": [
+    "API process route handler splits audio into 30-second segments.",
+    "Chunks are uploaded to the Gemini Files API and polled until they are ACTIVE.",
+    "Each chunk's transcript is inserted into `public.transcript_chunks` with correct index and timestamps.",
+    "Errors in individual chunk processing are handled without failing the entire meeting immediately."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Integrate audio splitter in API process route",
+      "details": "Import the helper from `src/lib/audioSplitter.ts` in `src/app/api/process/route.ts` and slice files after downloading from storage.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Write parallel upload & transcription pipeline",
+      "details": "Implement batch uploads and polls to Gemini Files API. Restrict batch size or concurrency to avoid rate limits.",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Insert transcripts into database",
+      "details": "Perform inserts into `transcript_chunks` table for each chunk once completed.",
+      "pass": false
+    }
+  ],
+  "dependencies": ["TASK-2", "TASK-3"],
+  "estimatedComplexity": "high",
+  "technicalNotes": [
+    "Use Promise.all or a custom queue/concurrency pool (e.g. p-limit) to avoid triggering rate limit errors on the Gemini API."
+  ]
+}

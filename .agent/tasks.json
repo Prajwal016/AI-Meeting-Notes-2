@@ -1,0 +1,51 @@
+[
+  {
+    "id": "TASK-1",
+    "title": "Verify project prerequisites and access",
+    "category": "setup",
+    "specFilePath": ".agent/tasks/TASK-1.json",
+    "passes": false
+  },
+  {
+    "id": "TASK-2",
+    "title": "Create transcript_chunks table, RLS, and Realtime replication",
+    "category": "data-model",
+    "specFilePath": ".agent/tasks/TASK-2.json",
+    "passes": false
+  },
+  {
+    "id": "TASK-3",
+    "title": "Integrate ffmpeg-static and create server-side audio splitter helper",
+    "category": "functional",
+    "specFilePath": ".agent/tasks/TASK-3.json",
+    "passes": false
+  },
+  {
+    "id": "TASK-4",
+    "title": "Implement parallel transcription pipeline in API process route",
+    "category": "api-endpoint",
+    "specFilePath": ".agent/tasks/TASK-4.json",
+    "passes": false
+  },
+  {
+    "id": "TASK-5",
+    "title": "Implement Supabase Realtime channel listener on the client",
+    "category": "functional",
+    "specFilePath": ".agent/tasks/TASK-5.json",
+    "passes": false
+  },
+  {
+    "id": "TASK-6",
+    "title": "Implement Real-Time Segment UI rendering in details page",
+    "category": "ui-ux",
+    "specFilePath": ".agent/tasks/TASK-6.json",
+    "passes": false
+  },
+  {
+    "id": "TASK-7",
+    "title": "Implement final insights generation and compilation",
+    "category": "functional",
+    "specFilePath": ".agent/tasks/TASK-7.json",
+    "passes": false
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "id": "TASK-6",
+  "title": "Implement Real-Time Segment UI rendering in details page",
+  "category": "ui-ux",
+  "description": "Stitch together the real-time transcript chunks in numerical index order, display timestamps for each segment, and auto-scroll the transcript window as new segments arrive.",
+  "acceptanceCriteria": [
+    "Transcript segments are rendered in order of `chunk_index`.",
+    "Each segment shows its `start_time` and `end_time` (e.g. `[00:30 - 01:00]`).",
+    "Auto-scrolls the transcript container to the bottom when new segments are appended, unless the user manually scrolls up."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Update details page to load existing chunks",
+      "details": "When loading `/meetings/[id]`, fetch any already-processed transcript chunks from the database and sort them by `chunk_index`.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Render timestamps for chunks",
+      "details": "Display formatted timestamps next to each chunk in the transcript pane.",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Implement auto-scroll behavior",
+      "details": "Use a ref on the transcript container to scroll to the bottom when new segments arrive, preserving manual scrolling state.",
+      "pass": false
+    }
+  ],
+  "dependencies": ["TASK-5"],
+  "estimatedComplexity": "medium",
+  "technicalNotes": [
+    "Prevent layout shifts by using absolute heights or smooth scroll behaviors."
+  ]
+}

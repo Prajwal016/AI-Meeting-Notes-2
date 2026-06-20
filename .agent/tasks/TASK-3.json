@@ -1,0 +1,36 @@
+{
+  "id": "TASK-3",
+  "title": "Integrate ffmpeg-static and create server-side audio splitter helper",
+  "category": "functional",
+  "description": "Install `ffmpeg-static` and `fluent-ffmpeg` or write a custom native execution helper in Next.js backend to extract and slice audio files into sequential 30-second WAV/MP3 files.",
+  "acceptanceCriteria": [
+    "`ffmpeg-static` package is successfully installed in package.json.",
+    "A server-side helper function takes a media file path and splits it into 30-second segments in a temporary directory.",
+    "Segments are saved in the correct numerical order (e.g. `chunk_0.wav`, `chunk_1.wav`)."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Install ffmpeg packages",
+      "details": "Run `npm i ffmpeg-static` and `@types/fluent-ffmpeg` to configure packaging.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Write server-side audio processing helper",
+      "details": "Create `src/lib/audioSplitter.ts` using `child_process.exec` or `fluent-ffmpeg` to slice files. The path to the static binary is imported from `ffmpeg-static`.",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Create automated test script",
+      "details": "Write a lightweight test script in `scratch/` folder to split a dummy test file locally and verify slices are created correctly.",
+      "pass": false
+    }
+  ],
+  "dependencies": ["TASK-1"],
+  "estimatedComplexity": "medium",
+  "technicalNotes": [
+    "Make sure to set file paths and directories dynamically using `path` library. Delete temporary directories on finish."
+  ]
+}

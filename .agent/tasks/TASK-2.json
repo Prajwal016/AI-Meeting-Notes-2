@@ -1,0 +1,38 @@
+{
+  "id": "TASK-2",
+  "title": "Create transcript_chunks table, RLS, and Realtime replication",
+  "category": "data-model",
+  "description": "Create a new `transcript_chunks` database table in Supabase, enable row-level security (RLS) to restrict access to authenticated owners, and configure Supabase Realtime subscription replication.",
+  "acceptanceCriteria": [
+    "`public.transcript_chunks` table exists with columns: id, meeting_id, chunk_index, start_time, end_time, text, status, and created_at.",
+    "Row-Level Security (RLS) is enabled on the table.",
+    "A SELECT policy allows authenticated users to only read chunks associated with their own meetings.",
+    "An INSERT policy allows inserting chunks.",
+    "Supabase Realtime is enabled on the table."
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "Create migration SQL file",
+      "details": "Create `supabase/migrations/20260620_transcript_chunks.sql` with CREATE TABLE, ALTER TABLE ENABLE RLS, and CREATE POLICY statements.",
+      "pass": false
+    },
+    {
+      "step": 2,
+      "description": "Enable Supabase Realtime on the table",
+      "details": "Add SQL in the migration file to publish updates to the supabase_realtime publication: `alter publication supabase_realtime add table public.transcript_chunks;`",
+      "pass": false
+    },
+    {
+      "step": 3,
+      "description": "Apply the migration",
+      "details": "Execute the SQL statements on the Supabase database using the Supabase MCP client tool or via local CLI query commands.",
+      "pass": false
+    }
+  ],
+  "dependencies": ["TASK-1"],
+  "estimatedComplexity": "medium",
+  "technicalNotes": [
+    "Verify RLS policies using SELECT queries to ensure other users cannot see transcript chunks belonging to a different user's meeting."
+  ]
+}
