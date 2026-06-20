@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Create a database record with "processing" status
+    // 1. Create a database record with "downloading" status
     const { error: insertError } = await supabase.from('meetings').insert({
       id: meetingId,
       user_id: user.id,
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       storage_path: storagePath,
       file_type: fileType || 'unknown',
       file_size: fileSize || 0,
-      status: 'processing',
+      status: 'downloading',
     });
 
     if (insertError) {
@@ -66,6 +66,9 @@ export async function POST(request: Request) {
     const tempFilePath = path.join(tempDir, `${meetingId}-${fileName}`);
     const arrayBuffer = await fileData.arrayBuffer();
     fs.writeFileSync(tempFilePath, Buffer.from(arrayBuffer));
+
+    // Update status to 'transcribing'
+    await supabase.from('meetings').update({ status: 'transcribing' }).eq('id', meetingId);
 
     // 3. Upload file to Gemini Files API and call Gemini for transcript & intelligence
     let intelligence: any = {};
@@ -179,21 +182,10 @@ export async function POST(request: Request) {
       throw new Error('Gemini audio processing generated an empty transcript.');
     }
 
-    // 5. Update the meeting record with transcript, summary, and status "completed"
-    const { error: updateError } = await supabase
-      .from('meetings')
-      .update({
-        transcript: transcriptText,
-        summary: intelligence.summary || 'No summary generated.',
-        status: 'completed',
-      })
-      .eq('id', meetingId);
+    // Update status to 'saving' before bulk inserting related lists
+    await supabase.from('meetings').update({ status: 'saving' }).eq('id', meetingId);
 
-    if (updateError) {
-      throw new Error(`Failed to update meeting details: ${updateError.message}`);
-    }
-
-    // 6. Bulk insert Decisions
+    // 5. Bulk insert Decisions
     if (intelligence.decisions && intelligence.decisions.length > 0) {
       const decisionsData = intelligence.decisions.map((desc: string) => ({
         meeting_id: meetingId,
@@ -202,7 +194,7 @@ export async function POST(request: Request) {
       await supabase.from('decisions').insert(decisionsData);
     }
 
-    // 7. Bulk insert Action Items
+    // 6. Bulk insert Action Items
     if (intelligence.actionItems && intelligence.actionItems.length > 0) {
       const actionItemsData = intelligence.actionItems.map((item: any) => ({
         meeting_id: meetingId,
@@ -214,7 +206,7 @@ export async function POST(request: Request) {
       await supabase.from('action_items').insert(actionItemsData);
     }
 
-    // 8. Bulk insert Risks
+    // 7. Bulk insert Risks
     if (intelligence.risks && intelligence.risks.length > 0) {
       const risksData = intelligence.risks.map((risk: any) => ({
         meeting_id: meetingId,
@@ -222,6 +214,20 @@ export async function POST(request: Request) {
         severity: risk.severity || 'medium',
       }));
       await supabase.from('risks').insert(risksData);
+    }
+
+    // 8. Update the meeting record with transcript, summary, and status "completed"
+    const { error: updateError } = await supabase
+      .from('meetings')
+      .update({
+        transcript: transcriptText,
+        summary: intelligence.summary || 'No summary generated.',
+        status: 'completed',
+      })
+      .eq('id', meetingId);
+
+    if (updateError) {
+      throw new Error(`Failed to update final meeting details to completed: ${updateError.message}`);
     }
 
     return NextResponse.json({ success: true, meetingId });

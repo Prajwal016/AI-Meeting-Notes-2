@@ -13,7 +13,7 @@ interface Meeting {
   file_name: string;
   file_type: string;
   file_size: number;
-  status: 'processing' | 'completed' | 'failed';
+  status: 'processing' | 'downloading' | 'transcribing' | 'saving' | 'completed' | 'failed';
   summary: string;
   created_at: string;
   expires_at: string;
@@ -40,6 +40,20 @@ export default function DashboardPage() {
     };
     checkAuth();
   }, [router]);
+
+  // Poll for meetings status while any are processing
+  useEffect(() => {
+    const hasProcessing = meetings.some((m) =>
+      ['processing', 'downloading', 'transcribing', 'saving'].includes(m.status)
+    );
+    if (!hasProcessing) return;
+
+    const interval = setInterval(() => {
+      fetchMeetings();
+    }, 4000); // Poll every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [meetings]);
 
   const fetchMeetings = async () => {
     try {
@@ -68,6 +82,27 @@ export default function DashboardPage() {
 
   const getStatusBadge = (status: Meeting['status']) => {
     switch (status) {
+      case 'downloading':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            <Loader2 className="animate-spin h-3 w-3 mr-1" />
+            Downloading...
+          </span>
+        );
+      case 'transcribing':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <Loader2 className="animate-spin h-3 w-3 mr-1" />
+            Transcribing...
+          </span>
+        );
+      case 'saving':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <Loader2 className="animate-spin h-3 w-3 mr-1" />
+            Saving Insights...
+          </span>
+        );
       case 'processing':
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -166,7 +201,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMeetings.map((meeting) => {
               const actionCount = meeting.action_items?.[0]?.count || 0;
-              const isProcessing = meeting.status === 'processing';
+              const isProcessing = ['processing', 'downloading', 'transcribing', 'saving'].includes(meeting.status);
               const isFailed = meeting.status === 'failed';
 
               return (
@@ -200,10 +235,16 @@ export default function DashboardPage() {
                   </p>
 
                   <p className="text-sm text-gray-400 line-clamp-3 mb-6 h-15">
-                    {isProcessing
+                    {meeting.status === 'downloading'
+                      ? 'Downloading meeting recording from storage...'
+                      : meeting.status === 'transcribing'
+                      ? 'AI is transcribing and extracting meeting notes...'
+                      : meeting.status === 'saving'
+                      ? 'Finalizing and generating action items, decisions, and risks...'
+                      : isProcessing
                       ? 'AI transcription and notes generation is currently processing in the background...'
                       : isFailed
-                      ? 'Processing encountered a error. Please check the file format or upload another file.'
+                      ? 'Processing encountered an error. Please check the file format or upload another file.'
                       : meeting.summary}
                   </p>
 

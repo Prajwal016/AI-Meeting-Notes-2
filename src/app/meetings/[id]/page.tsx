@@ -26,7 +26,7 @@ interface Meeting {
   file_name: string;
   file_type: string;
   file_size: number;
-  status: 'processing' | 'completed' | 'failed';
+  status: 'processing' | 'downloading' | 'transcribing' | 'saving' | 'completed' | 'failed';
   summary: string;
   transcript: string;
   created_at: string;
