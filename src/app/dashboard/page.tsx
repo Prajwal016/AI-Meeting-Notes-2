@@ -49,15 +49,15 @@ export default function DashboardPage() {
     if (!hasProcessing) return;
 
     const interval = setInterval(() => {
-      fetchMeetings();
+      fetchMeetings(true);
     }, 4000); // Poll every 4 seconds
 
     return () => clearInterval(interval);
   }, [meetings]);
 
-  const fetchMeetings = async () => {
+  const fetchMeetings = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       // Fetch meetings and count associated action items
       const { data, error } = await supabase
         .from('meetings')
@@ -69,7 +69,7 @@ export default function DashboardPage() {
     } catch (err) {
       console.error('Error fetching meetings:', err);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
